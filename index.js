@@ -69,15 +69,29 @@ client.on('message', message => {
     let channelId = message.channel.id;
     let userId = message.author.id;
 
-    if (message.content.startsWith(`${botconfig.prefix}name `))
+    if (message.content.startsWith(`${botconfig.prefix}${botconfig.namecommand}`))
     {
-        // Pull name from the name command
-        let name = message.content.substr(message.content.indexOf(' ') + 1);
-
-        // I don't want empty strings or strings too long, so I'm setting an arbitrary 30 character limit
-        if (name.length == 0 || name.length > 30)
+        // Use a regex to match and capture the desired name
+        let reg = new RegExp('^' + botconfig.prefix + botconfig.namecommand + '[ ]+([^ ][a-zA-Z0-9 ]*)$');
+        let match = message.content.match(reg);
+        if (!match || match.length !== 2)
         {
-            message.channel.send('Provided name is either too short or long (0 < name <= 30).');
+            message.channel.send('Unable to detect name, please use "' + botconfig.prefix + botconfig.namecommand + ' NAME" (min ' + botconfig.minnamelen + ' and max ' + botconfig.maxnamelen + ' characters).');
+            return;
+        }
+
+        // Since regex matched, store the desired name
+        let name = match[1].trim();
+
+        // Verify that the name meets the minimum and maximum requirements
+        if (name.length < botconfig.minnamelen)
+        {
+            message.channel.send('Provided name is too short.');
+            return;
+        }
+        if (name.length > botconfig.maxnamelen)
+        {
+            message.channel.send('Provided name is too long.');
             return;
         }
 
@@ -100,7 +114,7 @@ client.on('message', message => {
                     }
 
                     // Inform the user that they've been named
-                    message.channel.send('<@' + message.author.id + '> I name you ' + name + '. Use "!unname" to remove your name.');
+                    message.channel.send('<@' + message.author.id + '> I name you ' + name + '. Use "' + botconfig.prefix + botconfig.unnamecommand + '" to remove your name.');
                 });
             }
             else
@@ -113,12 +127,12 @@ client.on('message', message => {
                         return;
                     }
 
-                    message.channel.send('<@' + message.author.id + '> I name you ' + name + '. Use "!unname" to remove your name.');
+                    message.channel.send('<@' + message.author.id + '> I name you ' + name + '. Use "' + botconfig.prefix + botconfig.unnamecommand + '" to remove your name.');
                 });
             }
         });
     }
-    else if (message.content === `${botconfig.prefix}unname`)
+    else if (message.content === `${botconfig.prefix}${botconfig.unnamecommand}`)
     {
         db.run('DELETE FROM tags WHERE guildId = ? AND channelId = ? AND userId = ?', [guildId, channelId, userId], (err) => {
             if (err)

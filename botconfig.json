@@ -1,6 +1,7 @@
 {
     "prefix": "!",
-    "acceptcommand": "accept",
-    "channel": "rules",
-    "role": "Accepted Rules"
+    "namecommand": "name",
+    "unnamecommand": "unname",
+    "minnamelen": 1,
+    "maxnamelen": 30
 }
