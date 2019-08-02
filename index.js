@@ -164,10 +164,27 @@ client.on('message', message => {
             if (rows.length === 1)
             {
                 let row = rows[0];
+                let textMsg = '<@' + message.author.id + '> [' + row.tag + '] ' + message.content;
 
-                message.channel
-                    .send('<@' + message.author.id + '> [' + row.tag + '] ' + message.content)
-                    .then(() => message.delete().catch(console.warn));
+                // If the user is also attempting to upload attachments, simply copy the attachment URLs
+                // with the message.
+                if (message.attachments.size > 0)
+                {
+                    let files = [];
+                    message.attachments.forEach((attachment) => {
+                        files.push(attachment.url);
+                    });
+                    message.channel
+                        .send(textMsg, { files: files })
+                        .then(() => message.delete().catch(console.warn));
+                }
+                else
+                {
+                    message.channel
+                        .send(textMsg)
+                        .then(() => message.delete().catch(console.warn));
+                }
+
             }
 
         });
