@@ -77,7 +77,7 @@ client.on('message', message => {
         // I don't want empty strings or strings too long, so I'm setting an arbitrary 30 character limit
         if (name.length == 0 || name.length > 30)
         {
-            message.send('Provided name is either too short or long (0 < name <= 30).');
+            message.channel.send('Provided name is either too short or long (0 < name <= 30).');
             return;
         }
 
