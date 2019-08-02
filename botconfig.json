@@ -1,0 +1,6 @@
+{
+    "prefix": "!",
+    "acceptcommand": "accept",
+    "channel": "rules",
+    "role": "Accepted Rules"
+}

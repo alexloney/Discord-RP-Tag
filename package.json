@@ -1,0 +1,11 @@
+{
+	"name": "rp-tag-bot",
+	"version": "1.0.0",
+	"description": "Automatically tag posts with an RP name",
+	"main": "index.js",
+	"author": "Loney, Alex",
+	"dependencies": {
+		"discord.js": "^11.5.1",
+		"sqlite3": "^4.0.9"
+	}
+}
