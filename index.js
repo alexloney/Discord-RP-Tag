@@ -6,6 +6,33 @@ const sqlite3 = require('sqlite3').verbose();
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
+function exitHandler(options, exitCode) {
+    if (options.cleanup) {
+        console.log('Cosing database');
+        db.close();
+        console.log('Database closed.');
+    }
+    if (exitCode || exitCode === 0) console.log(exitCode);
+    if (options.exit) process.exit();
+}
+
+// Prevent the program from closing instantly
+process.stdin.resume();
+
+// Do something when app is closing
+process.on('exit', exitHandler.bind(null, {cleanup: true}));
+
+// Catch ctrl+c event
+process.on('SIGINT', exitHandler.bind(null, {exit: true}));
+
+// Catch "kill pid" (for example: nodemon restart)
+process.on('SIGUSR1', exitHandler.bind(null, {exit: true}));
+process.on('SIGUSR2', exitHandler.bind(null, {exit: true}));
+
+// Catch uncaught exceptions
+process.on('uncaughtException', exitHandler.bind(null, {exit: true}));
+
+
 // Establish a connection to a SQLite database
 let db = new sqlite3.Database('./rpTags.db', (err) => {
     if (err) {
@@ -174,6 +201,10 @@ client.on('message', message => {
                     message.attachments.forEach((attachment) => {
                         files.push(attachment.url);
                     });
+
+                    // let embed = new Discord.RichEmbed()
+                    //     .setAuthor(message.author.)
+
                     message.channel
                         .send(textMsg, { files: files })
                         .then(() => message.delete().catch(console.warn));
